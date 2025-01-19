@@ -5,7 +5,7 @@
 # Architecture Diagram
 ```mermaid
   graph TB
-  	subgraph Autopass Cockpit
+  	subgraph Internal
   		subgraph application-layer[Application Layer]
   			subgraph domain-layer[Domain Layer]
   				Entities
