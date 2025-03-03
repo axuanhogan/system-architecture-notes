@@ -1,11 +1,11 @@
-# Overview
-Architecture based on：
+# Architecture
+### Based on
 1. Clean Architecture
 2. Hexagonal Architecture
-
-# Architecture Diagram
+   
+### Diagram
 ```mermaid
-graph LR
+graph TB
 	subgraph Internal
 		subgraph application-layer[Application Layer]
 			subgraph domain[Domain]
@@ -47,7 +47,7 @@ graph LR
 	
 	use-case -- Use --> domain
 	use-case -. Implement .-> application-layer-port-in
-	use-case -- Use --> external-adapters-out
+	external-adapters-in -- Use --> external-adapters-out
 	external-adapters-in -- Use --> use-case
 	external-adapters-out -. Implement .-> application-layer-port-out
 	
