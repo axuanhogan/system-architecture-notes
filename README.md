@@ -37,6 +37,10 @@ graph LR
 			Query
 		end
 		subgraph core-port-out[Port Out（Interface）]
+			core-port-out-service[Service]
+		end
+		subgraph core-port-in[Port In]
+			core-port-in-input[Input]
 		end
 	end
 	
@@ -47,6 +51,7 @@ graph LR
 	adapter-out-client -. Inject .-> adapter-out-service-impl
 	adapter-out-jpa-repostory -. Inject .-> adapter-out-repo-impl
 	adapter-out -. Implement .-> core-port-out
+	adapter-out -- Use --> core-port-in
 	core-port-out -. Inject .-> use-case
 	
 	adapter-out-repo-impl -- Save or Get --> data-store
