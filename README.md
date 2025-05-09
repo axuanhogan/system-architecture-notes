@@ -1,43 +1,14 @@
 # Architecture
-### Based on
+### References
 1. Clean Architecture
 2. Hexagonal Architecture
    
 ### Diagram
 ```mermaid
-graph TB
-	subgraph Internal
-		subgraph application-layer[Application Layer]
-			subgraph domain[Domain]
-				Entities
-			end
-			subgraph use-case[Use Case]
-				query[Query]
-				command[Command]
-			end
-			subgraph port[Port（Interface）]
-				subgraph application-layer-port-in[In]
-				end
-				subgraph application-layer-port-out[Out]
-					Clients
-					JPA
-				end
-			end
-		end
-		
-		subgraph external-adapters[External Adapters]
-			subgraph external-adapters-in[In]
-				external-adapters-in-Gateway[Gateway]
-			end
-			subgraph external-adapters-out[Out]
-				Services
-				Repositories
-			end
-		end
-	end
+graph LR
 		
 	subgraph External Out
-		resources[Resources]
+		resource[Resource]
 		data-store[(DataStore)]
 	end
 		
@@ -45,13 +16,39 @@ graph TB
 		web[Web]
 	end
 	
-	use-case -- Use --> domain
-	use-case -. Implement .-> application-layer-port-in
-	external-adapters-in -- Use --> external-adapters-out
-	external-adapters-in -- Use --> use-case
-	external-adapters-out -. Implement .-> application-layer-port-out
+	subgraph adapter[Adapter]
+		subgraph adapter-in[In]
+			adapter-in-Gateway[Gateway]
+		end
+		subgraph adapter-out[Out]
+			adapter-out-service-impl[ServiceImpl]
+			adapter-out-repo-impl[RepositoryImpl]
+			adapter-out-client[Client]
+			adapter-out-jpa-repostory[JpaRepostory]
+		end
+	end
 	
-	web -- Request --> external-adapters-in
-	Repositories -- Store --> data-store
-	Services-- Request --> resources
+	subgraph core[Core]
+		subgraph domain[Domain]
+			Entity
+		end
+		subgraph use-case[Use Case]
+			Command
+			Query
+		end
+		subgraph core-port-out[Port Out（Interface）]
+		end
+	end
+	
+	web -- Request --> adapter-in
+	
+	adapter-in -- Use --> use-case
+	use-case -- Use --> domain
+	adapter-out-client -. Inject .-> adapter-out-service-impl
+	adapter-out-jpa-repostory -. Inject .-> adapter-out-repo-impl
+	adapter-out -. Implement .-> core-port-out
+	core-port-out -. Inject .-> use-case
+	
+	adapter-out-repo-impl -- Save or Get --> data-store
+	adapter-out-service-impl -- Request --> resource
 ```
